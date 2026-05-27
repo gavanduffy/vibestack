@@ -27,10 +27,10 @@ export function InitialScreen({
 					{/* Title and subtitle */}
 					<div className="mb-8">
 						<h1 className="text-4xl font-bold mb-4 text-foreground">
-							What do you want to create?
+							What mobile app do you want to build?
 						</h1>
 						<p className="text-lg text-muted-foreground">
-							Start building with a single prompt. No coding needed.
+							Describe your idea and get a live Expo Go app on your phone in minutes. No coding needed.
 						</p>
 					</div>
 
