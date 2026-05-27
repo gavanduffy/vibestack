@@ -9,59 +9,56 @@ Use this tool to run a command inside an existing Vercel Sandbox. You can choose
 
 Use Run Command when:
 
-1. You need to install dependencies (e.g., `pnpm install`)
-2. You want to run a build or test process (e.g., `pnpm build`, `vite build`)
-3. You need to launch a development server or long-running process
+1. You need to install dependencies (e.g., `npm install` or `npx create-expo-app@latest`)
+2. You want to run a build or test process
+3. You need to launch the Expo Metro bundler (`npx expo start --tunnel`)
 4. You need to compile or execute code within the sandbox
 5. You want to run a task in the background without blocking the session
 
 ## Sequencing Rules
 
 - If two commands depend on each other, **set `wait: true` on the first** to ensure it finishes before starting the second
-  - ✅ Good: Run `pnpm install` with `wait: true` → then run `pnpm dev`
+  - ✅ Good: Run `npm install` with `wait: true` → then run `npx expo start --tunnel`
   - ❌ Bad: Run both with `wait: false` and expect them to be sequential
 - Do **not** issue multiple sequential commands in one call
-  - ❌ `cd src && node index.js`
-  - ✅ `node src/index.js`
-- Do **not** assume directory state is preserved — use full relative paths
+  - ❌ `cd myapp && npx expo start`
+  - ✅ `npx expo start --tunnel` (run from project root with full path)
+- Do **not** assume directory state is preserved — use the `cwd` parameter or full relative paths from the sandbox root
 
 ## Command Format
 
 - Separate the base command from its arguments
-  - ✅ `{ command: "pnpm", args: ["install", "--verbose"], wait: true }`
-  - ❌ `{ command: "pnpm install --verbose" }`
+  - ✅ `{ command: "npx", args: ["expo", "start", "--tunnel"], wait: false }`
+  - ❌ `{ command: "npx expo start --tunnel" }`
 - Avoid shell syntax like pipes, redirections, or `&&`. If unavoidable, ensure it works in a stateless, single-session execution
 
 ## When to Set `wait` to True
 
 - The next step depends on the result of the command
 - The command must finish before accessing its output
-- Example: Installing dependencies before building, compiling before running tests
+- Example: Installing dependencies before starting Metro, scaffolding before installing extra packages
 
 ## When to Set `wait` to False
 
-- The command is intended to stay running indefinitely (e.g., a dev server)
-- The command has no impact on subsequent operations (e.g., printing logs)
+- The command is intended to stay running indefinitely (e.g., `npx expo start --tunnel`)
+- The command has no impact on subsequent operations
 
-## Other Rules
-
-- When running `pnpm dev` in a Next.js or Vite project, HMR can handle updates so generally you don't need to kill the server process and start it again after changing files.
-
-## Examples
+## Expo Go Workflow Examples
 
 <example>
-User: Install dependencies and then run the dev server  
+User: Build me a mobile weather app  
 Assistant:  
-1. Run Command: `{ command: "pnpm", args: ["install"], wait: true }`  
-2. Run Command: `{ command: "pnpm", args: ["run", "dev"], wait: false }`  
+1. Run Command: `{ command: "npx", args: ["create-expo-app@latest", "my-app", "--template", "blank-typescript"], wait: true }`  
+2. Run Command: `{ command: "npm", args: ["install"], wait: true, cwd: "my-app" }`  
+3. Run Command: `{ command: "npx", args: ["expo", "start", "--tunnel"], wait: false, cwd: "my-app" }`  
 </example>
 
 <example>
-User: Build the app with Vite  
+User: Add expo-camera to the project  
 Assistant:  
-Run Command: `{ command: "vite", args: ["build"], wait: true }`  
+Run Command: `{ command: "npx", args: ["expo", "install", "expo-camera"], wait: true }`  
 </example>
 
 ## Summary
 
-Use Run Command to start shell commands in the sandbox, controlling execution flow with the `wait` flag. Commands are stateless and isolated — use relative paths, and only run long-lived processes with `wait: false`.
+Use Run Command to start shell commands in the sandbox, controlling execution flow with the `wait` flag. Commands are stateless and isolated — use relative paths, and run the Expo Metro bundler with `wait: false`. Always use `--tunnel` with `npx expo start` so the Metro server is reachable outside the sandbox.
