@@ -23,7 +23,7 @@ Use Run Command when:
 - Do **not** issue multiple sequential commands in one call
   - ❌ `cd myapp && npx expo start`
   - ✅ `npx expo start --tunnel` (run from project root with full path)
-- Do **not** assume directory state is preserved — use full relative paths
+- Do **not** assume directory state is preserved — use the `cwd` parameter or full relative paths from the sandbox root
 
 ## Command Format
 

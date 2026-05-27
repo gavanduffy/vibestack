@@ -30,7 +30,7 @@ Expo Go supports out of the box:
 - All `expo-*` packages (camera, location, notifications, etc.)
 - Expo Router navigation
 - `react-native-reanimated`, `react-native-gesture-handler`, and most UI libraries
-- Push notifications, deep links, and more
+- Push notifications, deep links, asset loading, custom fonts, splash screens, and app icons
 
 You need `npx expo run:ios/android` or `eas build` **ONLY** when using:
 - Local Expo modules (custom native code in `modules/`)
@@ -185,18 +185,15 @@ export default function WebChart({ data, dom }: { data: number[]; dom: import("e
 When the user wants to deploy to stores or distribute for testing:
 
 ```bash
-npm install -g eas-cli
-eas login
+npx eas-cli@latest login
 npx eas-cli@latest init
 
 # Build for production
 npx eas-cli@latest build -p ios --profile production
 npx eas-cli@latest build -p android --profile production
 
-# TestFlight (iOS beta)
+# TestFlight (iOS beta) — build and submit in one step
 npx eas-cli@latest build -p ios --profile production --submit
-# or simply:
-npx testflight
 
 # EAS Hosting (web + API routes)
 npx eas-cli@latest deploy
